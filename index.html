@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CharmCraft — Santun, Pede, & Tulus</title>
+  <link rel="stylesheet" href="styles.css" />
+  <meta name="description" content="Generator pujian sopan, icebreaker, dan ide kencan yang tulus. Fokus pada respek & consent." />
+</head>
+<body>
+  <header class="nav">
+    <div class="brand">Charm<span>Craft</span></div>
+    <nav>
+      <a href="#pujian">Pujian</a>
+      <a href="#icebreaker">Icebreaker</a>
+      <a href="#ide-kencan">Ide Kencan</a>
+      <a href="#rencana">Rencana</a>
+    </nav>
+    <button id="themeToggle" class="ghost">🌓</button>
+  </header>
+
+  <section class="hero">
+    <h1>Kenalan dengan <span>tulus</span>, bukan modus.</h1>
+    <p>Alat kecil untuk bantu kamu memulai obrolan, memberi pujian sopan, dan merancang kencan yang berkesan.</p>
+    <div class="cta">
+      <a class="btn" href="#icebreaker">Mulai dengan Icebreaker</a>
+      <a class="btn outline" href="#pujian">Beri Pujian</a>
+    </div>
+    <small class="disclaimer">Ingat: respek, kejujuran, dan consent selalu nomor satu. ✌️</small>
+  </section>
+
+  <main class="container">
+    <!-- PUJIAN -->
+    <section id="pujian" class="card">
+      <h2>Generator Pujian Sopan</h2>
+      <form class="grid" onsubmit="return false">
+        <label>
+          Nama (opsional)
+          <input id="namaInput" type="text" placeholder="misal: Sinta" />
+        </label>
+        <label>
+          Gaya
+          <select id="gayaPujian">
+            <option value="ringan">Ringan & hangat</option>
+            <option value="tulus">Tulus & personal</option>
+            <option value="humor">Sedikit humor</option>
+          </select>
+        </label>
+      </form>
+      <div class="actions">
+        <button class="btn" id="buatPujian">Buat Pujian</button>
+        <button class="btn ghost" id="salinPujian" disabled>Salin</button>
+      </div>
+      <blockquote id="outputPujian" class="output" aria-live="polite">Klik “Buat Pujian” untuk contoh.</blockquote>
+    </section>
+
+    <!-- ICEBREAKER -->
+    <section id="icebreaker" class="card">
+      <h2>Icebreaker Anti-Cringe</h2>
+      <form class="grid" onsubmit="return false">
+        <label>
+          Situasi
+          <select id="situasi">
+            <option value="chat">Chat online</option>
+            <option value="ketemu">Ketemu langsung</option>
+            <option value="dm">DM Instagram</option>
+            <option value="kelas">Satu kelas/kantor</option>
+          </select>
+        </label>
+        <label>
+          Suasana
+          <select id="suasana">
+            <option value="santai">Santai</option>
+            <option value="ceria">Ceria</option>
+            <option value="dewasa">Dewasa & sopan</option>
+          </select>
+        </label>
+      </form>
+      <div class="actions">
+        <button class="btn" id="buatIce">Buat Icebreaker</button>
+        <button class="btn ghost" id="salinIce" disabled>Salin</button>
+      </div>
+      <blockquote id="outputIce" class="output" aria-live="polite">Pilih situasi & suasana, lalu klik.</blockquote>
+    </section>
+
+    <!-- IDE KENCAN -->
+    <section id="ide-kencan" class="card">
+      <h2>Ide Kencan Sederhana & Berkesan</h2>
+      <form class="grid" onsubmit="return false">
+        <label>
+          Budget
+          <select id="budget">
+            <option value="hemat">Hemat</option>
+            <option value="sedang">Sedang</option>
+            <option value="bebas">Bebas</option>
+          </select>
+        </label>
+        <label>
+          Mood
+          <select id="mood">
+            <option value="aktif">Aktif</option>
+            <option value="tenang">Tenang</option>
+            <option value="kreatif">Kreatif</option>
+            <option value="kuliner">Kuliner</option>
+          </select>
+        </label>
+      </form>
+      <div class="actions">
+        <button class="btn" id="buatIde">Cari Ide</button>
+      </div>
+      <ul id="listIde" class="ideas"></ul>
+    </section>
+
+    <!-- RENCANA -->
+    <section id="rencana" class="card">
+      <h2>Rencana Kencan Mini</h2>
+      <p>Tulis rencana singkat yang bisa kamu kirim. Simpel, jelas, dan sopan.</p>
+      <form class="grid" id="formRencana">
+        <label>
+          Hari/Tanggal
+          <input id="tgl" type="text" placeholder="Sabtu sore / 23 Agustus 2025" required />
+        </label>
+        <label>
+          Tempat
+          <input id="tempat" type="text" placeholder="Taman Kota / Kafe Sunyi" required />
+        </label>
+        <label class="full">
+          Catatan
+          <textarea id="catatan" rows="3" placeholder="Aku ajak jalan santai 30 menit, lanjut minum teh. Kalau kamu kurang nyaman, bebas bilang ya."></textarea>
+        </label>
+        <button class="btn" type="submit">Buat Draft</button>
+        <button class="btn ghost" id="salinDraft" type="button" disabled>Salin</button>
+      </form>
+      <pre id="draftOutput" class="draft" aria-live="polite"></pre>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <small>© 2025 CharmCraft. Ingat: selalu hormati batasan & pilihan orang lain.</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
