@@ -1,103 +1,174 @@
-// ===== Helper: copy to clipboard =====
-async function copyText(elId, btnId){
-  const el = document.getElementById(elId);
-  const btn = document.getElementById(btnId);
-  if(!el || !el.textContent.trim()) return;
-  try{
-    await navigator.clipboard.writeText(el.textContent.trim());
-    const prev = btn.textContent;
-    btn.textContent = "Tersalin!";
-    setTimeout(()=>btn.textContent = prev, 1200);
-  }catch{
-    alert("Gagal menyalin. Izinkan clipboard ya.");
-  }
-}
+document.addEventListener('DOMContentLoaded', () => {
+    // === A. FUNGSI UTAMA ===
 
-// ===== Theme toggle (dark/light) =====
-const themeToggle = document.getElementById("themeToggle");
-themeToggle?.addEventListener("click", ()=>{
-  document.documentElement.classList.toggle("light");
+    // Data Bank (Contoh Sederhana)
+    const dataBank = {
+        pujian: {
+            resmi: [
+                "Saya sangat mengagumi *etos kerja* dan dedikasi Anda. Itu benar-benar menginspirasi.",
+                "Cara Anda menganalisis situasi menunjukkan *kecerdasan* yang luar biasa. Saya terkesan.",
+                "Anda memiliki *aura positif* yang menenangkan. Sangat menyenangkan bisa berinteraksi dengan Anda."
+            ],
+            santai: [
+                "Senyum kamu hari ini beneran bikin suasana jadi hangat. *Good vibe* banget!",
+                "Pilihan baju kamu keren deh, *stylenya* unik dan pas. Selera kamu oke juga ya.",
+                "Kamu kelihatan *all out* banget di acara tadi, keren! Aku suka energi positifmu."
+            ],
+            humor: [
+                "Aku tebak kamu pasti kerja di Google. Soalnya di matamu ada *semua yang aku cari* (Maaf, *cringe* dikit 😅).",
+                "Kamu tau nggak kenapa aku mau kenalan? Soalnya *vibe* kamu se-ceria *notifikasi Shopee flash sale*.",
+            ]
+        },
+        icebreaker: {
+            resmi: [
+                "Maaf mengganggu sebentar, saya ingin bertanya tentang [Topik Spesifik/Acara]. By the way, nama saya [Nama Anda].",
+                "Saya perhatikan Anda [Aksi Positif yang Dilakukan]. Itu sangat menarik, boleh saya tahu lebih banyak tentang hal itu?",
+            ],
+            santai: [
+                "Hai, aku suka [Detail Kecil tentang Mereka/Lingkungan]. Lumayan ya hari ini, btw aku [Nama Anda].",
+                "Gila, kopi di sini enak banget ya? Kamu udah coba yang rasa [Sebutkan Rasa]? Aku [Nama Anda], salam kenal.",
+            ],
+            followup: [
+                "Semoga harimu menyenangkan. Aku masih kepikiran obrolan kita soal [Topik]. Gimana kelanjutannya menurut kamu?",
+                "Hei [Nama], cuma mau bilang senang bisa kenalan. Kalau lagi senggang, mau ngopi santai sambil lanjut ngobrolin [Hobi Mereka]?",
+            ]
+        }
+    };
+
+    // Fungsi untuk mendapatkan kalimat acak
+    function getGeneratedOutput() {
+        const fokus = document.getElementById('fokusInteraksi').value;
+        const gaya = document.getElementById('gayaBahasa').value;
+        const nama = document.getElementById('namaInput').value.trim();
+
+        // Tentukan kategori data (Pujian atau Icebreaker/Follow-up)
+        const category = (fokus === 'pujian') ? dataBank.pujian : dataBank.icebreaker;
+        
+        // Sesuaikan kunci gaya untuk mencari data
+        const styleKey = (fokus === 'pujian') ? gaya : fokus; 
+        
+        // Jika fokus bukan pujian, kita tetap menggunakan data icebreaker
+        const dataSet = category[gaya] || category.santai; // Ambil data berdasarkan gaya
+        
+        if (!dataSet) return "Data tidak ditemukan. Coba kombinasi lain.";
+        
+        const randomIndex = Math.floor(Math.random() * dataSet.length);
+        let result = dataSet[randomIndex];
+
+        // Tambahkan nama di awal (jika ada)
+        if (nama) {
+            result = `${nama}, ${result.charAt(0).toLowerCase() + result.slice(1)}`;
+        } else {
+            result = result.charAt(0).toUpperCase() + result.slice(1);
+        }
+
+        return result;
+    }
+
+    // Fungsi untuk membuat proposal rencana kencan
+    function getDraftRencana() {
+        const tgl = document.getElementById('tgl').value.trim();
+        const tempat = document.getElementById('tempat').value.trim();
+        const catatan = document.getElementById('catatan').value.trim();
+        const ideDasar = document.getElementById('ideDasar').options[document.getElementById('ideDasar').selectedIndex].text;
+
+        if (!tgl || !tempat) {
+            return "Mohon isi Hari/Tanggal dan Lokasi.";
+        }
+
+        let draft = `Hai! 👋\n\n`;
+        draft += `Aku mau menawarkan ide kencan:\n`;
+        draft += `**Apa:** ${ideDasar}\n`;
+        draft += `**Kapan:** ${tgl}\n`;
+        draft += `**Di mana:** ${tempat}\n\n`;
+
+        if (catatan) {
+            draft += `**Catatan (Pilihan/Respek):** ${catatan}\n\n`;
+        } else {
+            draft += `**Catatan (Pilihan/Respek):** Kita bisa tentukan detailnya nanti. Jika kamu ada ide atau preferensi lain, sangat boleh diajukan!\n\n`;
+        }
+
+        draft += `Gimana menurutmu? Kalau OK, kabari ya. Kalau kamu kurang nyaman/sibuk, bebas bilang aja. 😊`;
+
+        return draft;
+    }
+
+
+    // === B. PENGATUR EVENT LISTENER ===
+
+    // 1. Generator Kalimat
+    const btnBuatDraft = document.getElementById('buatDraft');
+    const outputGenerated = document.getElementById('outputGenerated');
+    const btnSalinOutput = document.getElementById('salinOutput');
+
+    btnBuatDraft.addEventListener('click', () => {
+        const output = getGeneratedOutput();
+        outputGenerated.textContent = output;
+        btnSalinOutput.disabled = false;
+    });
+
+    btnSalinOutput.addEventListener('click', () => {
+        navigator.clipboard.writeText(outputGenerated.textContent)
+            .then(() => {
+                btnSalinOutput.textContent = 'Tersalin! ✅';
+                setTimeout(() => {
+                    btnSalinOutput.textContent = 'Salin Draf';
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Gagal menyalin: ', err);
+                alert('Gagal menyalin teks.');
+            });
+    });
+    
+    // 2. Draft Rencana Kencan
+    const btnBuatDraftRencana = document.getElementById('buatDraftRencana');
+    const draftOutput = document.getElementById('draftOutput');
+    const btnSalinDraftRencana = document.getElementById('salinDraftRencana');
+    const formRencana = document.getElementById('formRencana');
+
+    btnBuatDraftRencana.addEventListener('click', (e) => {
+        e.preventDefault();
+        const output = getDraftRencana();
+        draftOutput.textContent = output;
+        
+        // Hanya aktifkan tombol salin jika output bukan pesan error (misal: "Mohon isi...")
+        if (!output.startsWith("Mohon isi")) {
+            btnSalinDraftRencana.disabled = false;
+        } else {
+             alert(output); // Tampilkan alert jika ada error validasi
+        }
+    });
+
+    btnSalinDraftRencana.addEventListener('click', () => {
+        navigator.clipboard.writeText(draftOutput.textContent)
+            .then(() => {
+                btnSalinDraftRencana.textContent = 'Tersalin! ✅';
+                setTimeout(() => {
+                    btnSalinDraftRencana.textContent = 'Salin Proposal';
+                }, 2000);
+            })
+            .catch(err => {
+                console.error('Gagal menyalin: ', err);
+                alert('Gagal menyalin teks.');
+            });
+    });
+
+    // 3. Toggle Tema (Dark/Light Mode)
+    const themeToggle = document.getElementById('themeToggle');
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        themeToggle.textContent = isDark ? '☀️' : '🌓';
+    });
+
+    // Muat Tema dari Local Storage
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggle.textContent = '☀️';
+    } else {
+        themeToggle.textContent = '🌓';
+    }
 });
-
-// ======== PUJIAN ========
-const namaInput = document.getElementById("namaInput");
-const gayaPujian = document.getElementById("gayaPujian");
-const outputPujian = document.getElementById("outputPujian");
-const btnPujian = document.getElementById("buatPujian");
-const btnSalinPujian = document.getElementById("salinPujian");
-
-const pujianMap = {
-  ringan: [
-    "Senyummu bikin suasana jadi lebih ringan.",
-    "Cara kamu menyimak itu bikin orang merasa dihargai.",
-    "Gaya kamu sederhana tapi berkelas, enak dilihat."
-  ],
-  tulus: [
-    "Aku kagum sama cara kamu menghormati orang lain.",
-    "Kamu terlihat tulus dan hangat; itu langka dan berharga.",
-    "Percaya dirimu terasa natural, bikin nyaman."
-  ],
-  humor: [
-    "Kamu itu kombinasi langka: asyik diajak ngobrol, bonusnya bikin betah 😊",
-    "Sejujurnya, vibe kamu kayak lagu enak—susah nggak diulang.",
-    "Garing dikit gapapa, yang penting kamu lucu asli, bukan settingan 😄"
-  ]
-};
-
-btnPujian?.addEventListener("click", ()=>{
-  const nama = (namaInput.value || "").trim();
-  const gaya = gayaPujian.value || "ringan";
-  const list = pujianMap[gaya];
-  const text = list[Math.floor(Math.random()*list.length)];
-  const withName = nama ? `${nama}, ${text}` : text;
-  outputPujian.textContent = withName;
-  btnSalinPujian.disabled = false;
-});
-btnSalinPujian?.addEventListener("click", ()=>copyText("outputPujian","salinPujian"));
-
-// ======== ICEBREAKER ========
-const outputIce = document.getElementById("outputIce");
-const btnIce = document.getElementById("buatIce");
-const btnSalinIce = document.getElementById("salinIce");
-const situasi = document.getElementById("situasi");
-const suasana = document.getElementById("suasana");
-
-const icePool = [
-  {situasi:"chat", suasana:"santai", text:"Aku lagi cari rekomendasi lagu enak buat kerja. Kamu punya andalan?"},
-  {situasi:"chat", suasana:"ceria",  text:"Kalau hari ini dikasih satu ‘power’, kamu pilih bisa teleport atau baca pikiran?"},
-  {situasi:"chat", suasana:"dewasa", text:"Aku suka cara kamu menyampaikan pendapat. Topik apa yang lagi kamu senangi akhir-akhir ini?"},
-  {situasi:"ketemu", suasana:"santai", text:"Halo, aku [nama]. Boleh duduk sini? Janji nggak ganggu, cuma pengen kenalan :)"},
-  {situasi:"ketemu", suasana:"ceria",  text:"Random banget, tapi kalau es krim cuma boleh satu rasa seumur hidup—kamu pilih apa?"},
-  {situasi:"ketemu", suasana:"dewasa", text:"Kamu terlihat nyaman di sini. Apa kamu sering datang? Aku boleh tanya rekomendasi?"},
-  {situasi:"dm", suasana:"santai", text:"Hai, aku nemu postinganmu tentang [topik]. Insight-nya menarik. Boleh aku tanya hal kecil?"},
-  {situasi:"dm", suasana:"ceria",  text:"Baru lihat story kamu dan itu wholesome bgt. Ada cerita di baliknya?"},
-  {situasi:"dm", suasana:"dewasa", text:"Aku ingin ngobrol singkat soal [topik]. Kalau kamu keberatan, feel free bilang ya—aku hormati."},
-  {situasi:"kelas", suasana:"santai", text:"Tugas [mata kuliah] lumayan menantang ya. Kamu ada trik biar lebih gampang?"},
-  {situasi:"kelas", suasana:"ceria",  text:"Tim kopi atau teh pas begadang ngerjain tugas? Aku lagi butuh ide."},
-  {situasi:"kelas", suasana:"dewasa", text:"Aku suka caramu presentasi tadi—ringkas & jelas. Mau diskusi lanjut habis kelas?"}
-];
-
-btnIce?.addEventListener("click", ()=>{
-  const s = situasi.value, u = suasana.value;
-  const candidates = icePool.filter(i=>i.situasi===s && i.suasana===u);
-  const pick = candidates[Math.floor(Math.random()*candidates.length)];
-  outputIce.textContent = pick.text;
-  btnSalinIce.disabled = false;
-});
-btnSalinIce?.addEventListener("click", ()=>copyText("outputIce","salinIce"));
-
-// ======== IDE KENCAN ========
-const budget = document.getElementById("budget");
-const mood = document.getElementById("mood");
-const listIde = document.getElementById("listIde");
-const btnIde = document.getElementById("buatIde");
-
-const ide = [
-  {title:"Taman Kota + Piknik Hemat", mood:"tenang", budget:"hemat", note:"Bawa teh/kopi sendiri, kartu UNO, dan playlist."},
-  {title:"Jelajah Street Food", mood:"kuliner", budget:"hemat", note:"Tentukan 3 spot dalam 1 km, kasih rating bareng."},
-  {title:"Workshop DIY Mini", mood:"kreatif", budget:"sedang", note:"Lukis totebag/gelas di studio lokal."},
-  {title:"Museum & Ngopi", mood:"tenang", budget:"sedang", note:"Cari pameran temporer, ngobrol soal karya favorit."},
-  {title:"Fun Sport Bareng", mood:"aktif", budget:"sedang", note:"Badminton/bowling, kalah traktir camilan."},
-  {title:"Kelas Masak Berdua", mood:"kreatif", budget:"bebas", note:"Pilih cuisine favoritnya; pulang bawa resep."},
-  {title:"Dinner View Kota", mood:"tenang", budget:"bebas
-
